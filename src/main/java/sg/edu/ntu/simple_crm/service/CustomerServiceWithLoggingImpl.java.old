@@ -1,0 +1,61 @@
+package sg.edu.ntu.simple_crm.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import sg.edu.ntu.simple_crm.model.Customer;
+import sg.edu.ntu.simple_crm.repository.CustomerRepository;
+import sg.edu.ntu.simple_crm.exceptions.CustomerNotFoundException;
+
+//@Primary 
+@Service
+public class CustomerServiceWithLoggingImpl implements CustomerService {
+
+  private static final Logger logger = LoggerFactory.getLogger(CustomerServiceValidationImpl.class);
+  private final CustomerRepository customerRepository;
+
+  public CustomerServiceWithLoggingImpl(CustomerRepository customerRepository) {
+    this.customerRepository = customerRepository;
+  }
+
+  @Override
+  public Customer createCustomer(Customer customer) {
+    logger.info("CustomerServiceWithLoggingImpl.createCustomer() called");
+    return customerRepository.createCustomer(customer);
+  }
+
+  @Override
+  public List<Customer> getAllCustomers() {
+    logger.info("CustomerServiceWithLoggingImpl.getAllCustomers() called");
+    return customerRepository.getAllCustomers();
+  }
+
+  @Override
+  public Customer getCustomer(Long id) {
+    logger.info("CustomerServiceWithLoggingImpl.getCustomer() called with id: " + id);
+    return customerRepository.getCustomer(getCustomerIndex(id));
+  }
+
+  @Override
+  public Customer updateCustomer(Long id, Customer customer) {
+    logger.info("CustomerServiceWithLoggingImpl.updateCustomer() called with id: " + id);
+    return customerRepository.updateCustomer(getCustomerIndex(id), customer);
+  }
+
+  @Override
+  public void deleteCustomer(Long id) {
+    logger.info("CustomerServiceWithLoggingImpl.deleteCustomer() called with id: " + id);
+    customerRepository.deleteCustomer(getCustomerIndex(id));
+  }
+
+  private int getCustomerIndex(Long id) {
+    for (Customer customer : customerRepository.getAllCustomers()) {
+      if (customer.getId().equals(id)) {
+        return customerRepository.getAllCustomers().indexOf(customer);
+      }
+    }
+    throw new CustomerNotFoundException(id);
+  }
+}
