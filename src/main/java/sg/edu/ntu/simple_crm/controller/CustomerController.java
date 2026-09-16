@@ -1,8 +1,12 @@
 package sg.edu.ntu.simple_crm.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +35,7 @@ public class CustomerController {
 
     // create a customer by calling an API
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> createCustomer(@RequestBody @Valid Customer customer) {
         Customer createdCustomer = customerService.createCustomer(customer);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
@@ -44,57 +48,54 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCustomer(@PathVariable Long id) {
-        try {
-            Customer foundCustomer = customerService.getCustomer(id);
-            return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
-        } catch (CustomerNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }
+        // try {
+        //     Customer foundCustomer = customerService.getCustomer(id);
+        //     return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
+        // } catch (CustomerNotFoundException e) {
+        //     return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        // }
+        Customer foundCustomer = customerService.getCustomer(id);
+        return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
     }
 
     // Removed getCustomerIndex method as it is now handled by the service
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
-        try {
-            Customer updatedCustomer = customerService.updateCustomer(id, customer);
-            return new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
-        } catch (CustomerNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        // try {
+        //     Customer updatedCustomer = customerService.updateCustomer(id, customer);
+        //     return new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
+        // } catch (CustomerNotFoundException e) {
+        //     return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        // }
+        Customer updatedCustomer = customerService.updateCustomer(id, customer);
+        return new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCustomer(@PathVariable Long id) {
-        try {
-            customerService.deleteCustomer(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (CustomerNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
-        }
+        customerService.deleteCustomer(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/{id}/interactions")
     public ResponseEntity<Interaction> addInteractionToCustomer(
         @PathVariable Long id,
         @RequestBody Interaction interaction) {
-    Interaction newInteraction = customerService.addInteractionToCustomer(id, interaction);
-    return new ResponseEntity<>(newInteraction, HttpStatus.CREATED);
+        Interaction newInteraction = customerService.addInteractionToCustomer(id, interaction);
+        return new ResponseEntity<>(newInteraction, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Customer>> searchCustomers(@RequestParam String firstName) {
+        List<Customer> foundCustomers = customerService.searchCustomers(firstName);
+        return new ResponseEntity<>(foundCustomers, HttpStatus.OK);
+    }
+
+    @GetMapping("/search/job")
+    public ResponseEntity<List<Customer>> searchCustomersByJobTitle(@RequestParam String jobTitle) {
+        List<Customer> foundCustomers = customerService.searchCustomersByJobTitle(jobTitle);
+        return new ResponseEntity<>(foundCustomers, HttpStatus.OK);
     }
 }
-
-// public class CustomerController {
-//     private Customer customer;
-    
-//     @GetMapping("/Customer")
-//     public Customer getCustomer() {
-//         customer.setId("1");
-//         customer.setFirstName("john");
-//         customer.setLastName("doe");
-//         customer.setEmail("johndoe@example.com");
-//         customer.setContactNo("123-456-7890");
-
-//         return customer;
-//     }
-// }
     

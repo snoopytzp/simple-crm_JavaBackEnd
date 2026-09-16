@@ -65,6 +65,8 @@ public class CustomerServiceValidationImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(Long id) {
+        customerRepository.findById(id)
+            .orElseThrow(() -> new CustomerNotFoundException(id));
         customerRepository.deleteById(id);
     }
 
@@ -77,6 +79,16 @@ public class CustomerServiceValidationImpl implements CustomerService {
         interaction.setCustomer(selectedCustomer);
         // Step 3: Save and return the interaction
         return interactionRepository.save(interaction);
+    }
+
+    @Override
+    public List<Customer> searchCustomers(String firstName) {
+        return customerRepository.findByFirstName(firstName);
+    }
+
+    @Override
+    public List<Customer> searchCustomersByJobTitle(String jobTitle) {
+        return customerRepository.findByJobTitleJPQL(jobTitle);
     }
 
     // private int getCustomerIndex(Long id) {

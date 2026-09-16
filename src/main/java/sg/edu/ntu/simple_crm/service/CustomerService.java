@@ -11,4 +11,6 @@ public interface CustomerService {
   Customer updateCustomer(Long id, Customer customer);
   void deleteCustomer(Long id);
   Interaction addInteractionToCustomer(Long id, Interaction interaction); 
+  List<Customer> searchCustomers(String firstName);
+  List<Customer> searchCustomersByJobTitle(String jobTitle);
 }
